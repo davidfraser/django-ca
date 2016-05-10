@@ -80,7 +80,7 @@ class CertificateAuthorityAdmin(CertificateMixin, admin.ModelAdmin):
             'classes': ('as-code', ),
         }),
         (_('Details'), {
-            'fields': ['crl_url', 'issuer_url', 'ocsp_url', 'issuer_alt_name', ]
+            'fields': ['crl_url', 'issuer_url', 'ocsp_url', 'issuer_alt_name', 'permitted_dns', ]
         }),
     )
     list_display = ['enabled', 'name', 'serial', ]

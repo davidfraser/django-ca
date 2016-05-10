@@ -37,6 +37,8 @@ class Command(BaseCommand, CertificateAuthorityDetailMixin):
             ca.issuer_alt_name = options['issuer_alt_name']
         if options['ocsp_url'] is not None:
             ca.ocsp_url = options['ocsp_url']
+        if options['permitted_dns']:
+            ca.permitted_dns = ','.join(options['permitted_dns'])
         if options['crl_url'] is not None:
             ca.crl_url = '\n'.join(options['crl_url'])
 

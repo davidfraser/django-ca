@@ -238,6 +238,9 @@ class CertificateAuthority(X509CertMixin):
     issuer_alt_name = models.URLField(blank=True, null=True, verbose_name=_('issuerAltName'),
                                       help_text=_("URL for your CA."))
 
+    permitted_dns = models.TextField(blank=True, help_text=_('Comma-separated list of domains which this CA is permitted to act as an authority for.'),
+                                     null=True, verbose_name=_('Permitted DNS for Name Constraints'))
+
     _key = None
 
     @property

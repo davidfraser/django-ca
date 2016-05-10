@@ -31,7 +31,8 @@ from .utils import is_power2
 
 class CertificateAuthorityManager(models.Manager):
     def init(self, name, key_size, key_type, algorithm, expires, parent, pathlen, subject,
-             issuer_url=None, issuer_alt_name=None, crl_url=None, ocsp_url=None, password=None):
+             issuer_url=None, issuer_alt_name=None, crl_url=None, ocsp_url=None, password=None,
+             permitted_dns=None):
         """Create a Certificate Authority."""
 
         # NOTE: This is already verified by KeySizeAction, so none of these checks should ever be
@@ -63,6 +64,11 @@ class CertificateAuthorityManager(models.Manager):
             crypto.X509Extension(b'subjectKeyIdentifier', False, b'hash', subject=cert),
             crypto.X509Extension(b'subjectAltName', 0, san),
         ])
+        if permitted_dns:
+            nameConstraints = ",".join(["permitted;DNS:%s" % d for d in permitted_dns.split(',')])
+            cert.add_extensions([
+                crypto.X509Extension(b'nameConstraints', True, nameConstraints.encode('utf-8'))
+            ])
 
         if parent is None:
             authKeyId = crypto.X509Extension(b'authorityKeyIdentifier', False,
@@ -83,7 +89,8 @@ class CertificateAuthorityManager(models.Manager):
 
         # create certificate in database
         ca = self.model(name=name, issuer_url=issuer_url, issuer_alt_name=issuer_alt_name,
-                        ocsp_url=ocsp_url, crl_url=crl_url, parent=parent)
+                        ocsp_url=ocsp_url, crl_url=crl_url, parent=parent,
+                        permitted_dns=permitted_dns)
         ca.x509 = cert
         ca.private_key_path = os.path.join(ca_settings.CA_DIR, '%s.key' % ca.serial)
         ca.save()

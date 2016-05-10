@@ -252,3 +252,7 @@ class CertificateAuthorityDetailMixin(object):
             '--ocsp-url', metavar='URL', action=URLAction,
             help='URL of an OCSP responder.'
         )
+        group.add_argument(
+            '--permitted-dns', metavar='DNS', nargs='*',
+            help='DNS name permitted with name constraint.'
+        )
